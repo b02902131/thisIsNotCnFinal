@@ -214,7 +214,123 @@ int main(int argc,char *argv[]){
         			//receive request
         			else
         			{
-        				
+        				conn_fd = i;
+                        if(conn_fd < 0)
+                        {
+                            if (errno == EINTR || errno == EAGAIN)
+                                continue;
+                            
+                            if (errno == ENFILE)
+                            {
+                                (void)fprintf(stderr, "out of file descriptor table ... (maxconn %d)\n", maxfd);
+                                continue;
+                            }
+                            
+                            ERR_EXIT("accept")
+                        }
+
+                        int new_fd = requestP[conn_fd].conn_fd;
+                        char buf_rev[512];
+
+                        bzero(buf_rev,512);
+                        ret = recv(new_fd,buf_rev,512,0);
+
+                        if(ret < 0)
+                        {
+                            fprintf(stderr, "bad request from %s\n", requestP[conn_fd].host);
+                            continue;
+                        }
+
+                        strcpy(requestP[conn_fd].buf,buf_rev);
+                        int len = strlen(requestP[conn_fd].buf);
+                        printf("return buf:%s",requestP[conn_fd].buf);
+                        printf("  buf_len:%d\n",len);
+
+                        int s1 = requestP[conn_fd].state;
+                        int s2 = requestP[conn_fd].substate;
+
+                        //state:8 substate:2(File Transfer-Sending finish)=============================
+                        if(s1 == 8 && s2 == 2){
+
+                        }//end state:8 substate:2(File Transfer-Sending finish)=============================
+
+                        //state:8 substate:1(File Transfer-Receiving)==================================
+                        else if(s1 == 8 && s2 == 1)
+                        {
+
+                        }//end (state:8 substate:1)
+
+                        //state:7 substate:1(Offline Message)=====================================
+                        else if(s1 == 7 && s2 == 1)
+                        {
+                            
+                        }//end (state:7 substate:1)
+
+                        //state:6 substate:1(Historical Message)==================================
+                        else if(s1 == 6 && s2 == 1)
+                        {
+                            
+                        }//end (state:6 substate:1)
+
+                        //state:5 substate:3(File Transfer- Enter file name)===========================
+                        else if(s1 == 5 && s2 == 3)
+                        {
+                            
+                        }//end (state:5 substate:3)
+
+                        //state:5 substate:2(File Transfer- Enter friend ID)===========================
+                        else if(s1 == 5 && s2 == 2)
+                        {
+                            
+                        }//end (state:5 substate:2)
+
+                        //state:5 substate:1(File transformation)==================================
+                        else if(s1 == 5 && s2 == 1)
+                        {
+                            
+                        }//end (state:5 substate:1)
+                        
+                        //state:4 substate:1(Chat Room)============================================
+                        else if(s1 == 4 && s2 == 1)
+                        {
+                            
+                        }//end (state:4 substate:1)
+                        
+                        //state:3 substate:1(Main table)===========================================
+                        else if(s1 == 3 && s2 == 1)
+                        {
+                            
+                        }//end (state:3 substate:1)
+                        
+                        //state:2 substate:2(Create-passward)==========================================
+                        else if(s1 == 2 && s2 == 2)
+                        {
+                            
+                        }//end (state:2 substate:2)
+                        
+                        //state:2 substate:1(Create-account)===========================================
+                        else if(s1 == 2 && s2 == 1)
+                        {
+                            
+                        }//end(state:2 substate:1)
+                        
+                        //state:1 substate:2(login-passward)===========================================
+                        else if(s1 == 1 && s2 == 2)
+                        {
+                            
+                        }//end else if(state:1 substate:2)
+                        
+                        //state:1 substate:1(login-account)============================================
+                        else if(s1 == 1 && s2 == 1)
+                        {
+                            
+                        }//(End)state:1 substate:1(login table)========================================
+                        
+                        //state:0 substate:0(login table)==============================================
+                        else if(s1 == 0 && s2 == 0)
+                        {
+                            
+                        }//(End)state:0 substate:0(login table)========================================
         			}//end else(i == svr.listen_fd)
         		}
         	}//end for(i=0;i<=connect_sum;i++)
