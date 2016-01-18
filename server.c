@@ -434,11 +434,28 @@ int main(int argc,char *argv[]){
                             }
                             else if(main_select == 2)
                             {
-                                
+                                changeStateAndSendUI(conn_fd,5,1,file_tran_title);
                             }
                             else if(main_select == 3)
                             {
-                                
+                                char filename[20];
+                                sprintf(filename, "history_%s.txt",requestP[conn_fd].account);
+
+                                FILE *file_p;
+                                file_p = fopen(filename,"r");
+                                char tmp_history[128];
+
+                                sendUI(conn_fd, history_title);
+                                if(!file_p){
+                                    sendUI(conn_fd,"\n there is no record. \n\n");
+                                }
+                                else{
+                                    while(fgets(tmp_history,128,file_p) != NULL){
+                                        sendUI(conn_fd, tmp_history);
+                                    }
+                                }
+                                sendUI(conn_fd, history_end);
+                                changeState(conn_fd,6,1);
                             }
                             else if(main_select == 4)
                             {
