@@ -12,3 +12,4 @@ ver1.4.5 broadcast
 1.4.6.7 broadcast update
 ver1.5 state6
 ver1.5 state6,7
+ver1.6 beta

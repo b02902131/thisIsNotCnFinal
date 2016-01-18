@@ -62,9 +62,11 @@ int maxfd;  // size of open file descriptor table, size of request list
 
 
 // my function
+static void checkReady(member * mem, int member_list_len, int connect_sum);
 static void broadcast(char * buf, member * mem, int member_list_len, int connect_sum);
 static void setMemOB(int conn_fd, int online, int busy, member * mem, int member_list_len);
 static void printMainTable(int conn_fd, member* mem, int member_list_len, int connect_sum);
+static void printFileTransfer(int conn_fd, member * mem, int member_list_len, int connect_sum);
 static void sendUI(int conn_fd, char * ui);
 static void changeStateAndSendUI(int conn_fd, int state, int substate, char * ui);
 static void changeState(int conn_fd, int state, int substate);
@@ -269,40 +271,80 @@ int main(int argc,char *argv[]){
                         }//end (state:8 substate:1)
 
                         //state:7 substate:1(Offline Message)=====================================
-                        else if(s1 == 7 && s2 == 1)
-                        {
-                            if(strcmp(requestP[conn_fd].buf,"/Home") == 0 || strcmp(requestP[conn_fd].buf,"/home") == 0)
-                            {
-                                changeStateAndSendUI(conn_fd,3,1,main_menu);
-                            }
-                        }//end (state:7 substate:1)
-
                         //state:6 substate:1(Historical Message)==================================
-                        else if(s1 == 6 && s2 == 1)
+                        else if(s1 == 6 && s1 == 7)
                         {
                             if(strcmp(requestP[conn_fd].buf,"/Home") == 0 || strcmp(requestP[conn_fd].buf,"/home") == 0)
                             {
                                 changeStateAndSendUI(conn_fd,3,1,main_menu);
                             }
-                            break; 
-                        }//end (state:6 substate:1)
+                            break;
+                        }//end (state:6,7 substate:1)
 
                         //state:5 substate:3(File Transfer- Enter file name)===========================
                         else if(s1 == 5 && s2 == 3)
                         {
-                            
+
                         }//end (state:5 substate:3)
 
                         //state:5 substate:2(File Transfer- Enter friend ID)===========================
                         else if(s1 == 5 && s2 == 2)
                         {
-                            
+                            if(strcmp(requestP[conn_fd].buf,"/Home") == 0 || strcmp(requestP[conn_fd].buf,"/home") == 0)
+                            {
+                                changeState(conn_fd,3,1);
+                                printMainTable(conn_fd, mem, member_list_len, connect_sum);
+                            }
+                            else
+                            {
+                                int transfer_id = atoi(requestP[conn_fd].buf);
+                                int trans_online;
+                                int trans_ready;
+                                char trans_receiver[20];
+
+                                transfer_id -= 1;
+                                
+                                checkReady(mem, member_list_len, connect_sum);
+
+                                if(transfer_id < 0 || transfer_id > member_list_len){
+                                    changeStateAndSendUI(conn_fd, 5, 2, file_err3);
+                                    printFileTransfer(conn_fd, mem, member_list_len, connect_sum);
+                                    break;
+                                }
+
+                                trans_online = mem[transfer_id].online;
+                                trans_ready = mem[transfer_id].busy;
+                                // offline 
+                                if(trans_online == 0){
+                                    changeStateAndSendUI(conn_fd, 5, 2, file_err1);
+                                    printFileTransfer(conn_fd, mem, member_list_len, connect_sum);
+                                    break;
+                                }
+                                // online & not ready
+                                if(trans_ready == 0){
+                                    changeStateAndSendUI(conn_fd, 5, 2, file_err2);
+                                    printFileTransfer(conn_fd, mem, member_list_len, connect_sum);
+                                    break;
+                                }
+
+                                changeState(conn_fd, 5, 3);
+                                requestP[conn_fd].send_to_mem_id = transfer_id;
+
+                                sendUI(conn_fd, sending_title1);
+                                sendUI(conn_fd, mem[transfer_id].account);
+                                sendUI(conn_fd, sending_title2);
+                            }
+
                         }//end (state:5 substate:2)
 
                         //state:5 substate:1(File transformation)==================================
                         else if(s1 == 5 && s2 == 1)
-                        {
-                            
+                        {   
+                            int file_select = atoi(requestP[conn_fd].buf);
+                            if(file_select == 1){
+                                changeState(conn_fd, 5, 2);
+                                printFileTransfer(conn_fd, mem, member_list_len, connect_sum);
+                            }
                         }//end (state:5 substate:1)
                         
                         //state:4 substate:1(Chat Room)============================================
@@ -729,8 +771,50 @@ static void printMainTable(int conn_fd, member * mem, int member_list_len, int c
                 write(requestP[conn_fd].conn_fd, buf, strlen(buf));
             }    
         }//end else(mem[i].online == 0)    
-    }//end for-loop
+    }//end for-loops
+}
 
+static void checkReady(member * mem, int member_list_len, int connect_sum){
+    int i,j;
+    for(i=0;i<=member_list_len;i++){
+        for(j=0;j<=connect_sum;j++){
+            if(strcmp(mem[i].account,requestP[j].account) == 0){
+                if(requestP[j].state == 8 && requestP[j].substate == 1)
+                    mem[i].busy = 1;
+                else
+                    mem[i].busy = 0;
+            }
+        }
+    }
+}
+
+static void printFileTransfer(int conn_fd, member * mem, int member_list_len, int connect_sum){
+    checkReady(mem, member_list_len, connect_sum);
+
+    sendUI(conn_fd, file_title1);
+    sendUI(conn_fd, file_title2);
+    
+    int i;
+    char buf[512];
+    for(i=0;i<=member_list_len;i++){
+        if(mem[i].online == 0){
+            if(mem[i].busy == 0){
+                sprintf(buf,"                                            %d              %s\n",i+1,mem[i].account);
+            }
+        }//end if(mem[i].online == 0)
+        else{
+            if(mem[i].busy == 0){
+                sprintf(buf,"       *                                    %d              %s\n",i+1,mem[i].account);
+            }
+            else{
+                sprintf(buf,"       *                *                   %d              %s\n",i+1,mem[i].account);
+            }
+        }//end else(mem[i].online == 0)
+        write(requestP[conn_fd].conn_fd, buf, strlen(buf));
+    }//end for-loop
+    
+    sendUI(conn_fd, file_title3);
+    //==(End)Print file_friend_table===//
 }
 
 static void sendUI(int conn_fd, char * ui){
