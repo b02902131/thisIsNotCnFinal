@@ -32,7 +32,7 @@ typedef struct
     // you don't need to change this.
     
     char account[20];
-    char passward[20];
+    char password[20];
     
     char history[MAX_DATA];
     
@@ -51,7 +51,7 @@ typedef struct
 typedef struct
 {
     char account[20];
-    char passward[20];
+    char password[20];
     int online;//1:online /0:offline
     int busy;//1:busy /0:not busy
 }member;
@@ -116,12 +116,12 @@ int main(int argc,char *argv[]){
     }
 
     //Load member list from member.txt
-    FILE *fp = fopen("member.txt","a+");
+    FILE *fp_mem = fopen("member.txt","a+");
 
     char member_buf[50];	
     int member_list_len;
     char temp_account[20];
-    char temp_passward[20];
+    char temp_password[20];
 
     member* mem = NULL;
     mem = (member*)malloc(sizeof(member) * max_member);
@@ -132,12 +132,12 @@ int main(int argc,char *argv[]){
     }
 
     i = -1;
-    while(fgets(member_buf,50,fp) != NULL)
+    while(fgets(member_buf,50,fp_mem) != NULL)
     {
         i++;
-        sscanf(member_buf,"%s %s",temp_account,temp_passward);
+        sscanf(member_buf,"%s %s",temp_account,temp_password);
         strcpy(mem[i].account,temp_account);
-        strcpy(mem[i].passward,temp_passward);
+        strcpy(mem[i].password,temp_password);
     }
     member_list_len = i;
     for(i=0;i<max_member;i++){
@@ -336,7 +336,7 @@ int main(int argc,char *argv[]){
                             }//end while
 
                             printf("Receive File: %s Successful!!!\n",file_name);
-                            fclose(fp);
+                            fclose(fp_transfer);
 
                             char receiver[20];
                             int receiver_fd;
@@ -382,7 +382,10 @@ int main(int argc,char *argv[]){
                             }   //end while(1)
 
                             printf("Send File: %s Successful!!!\n",file_name);
-                            fclose(fp);
+                            fclose(fp2);
+                            remove(file_name);
+
+                            sendUI(conn_fd, offline_end);
                         }//end (state:5 substate:3)
 
                         //state:5 substate:2(File Transfer- Enter friend ID)===========================
@@ -637,17 +640,17 @@ int main(int argc,char *argv[]){
                             break;
                         }//end (state:3 substate:1)
                         
-                        //state:2 substate:2(Create-passward)==========================================
+                        //state:2 substate:2(Create-password)==========================================
                         else if(s1 == 2 && s2 == 2)
                         {
-                            strcpy(requestP[conn_fd].passward,requestP[conn_fd].buf);
+                            strcpy(requestP[conn_fd].password,requestP[conn_fd].buf);
                             requestP[conn_fd].correct = 0;
-                            if(strlen(requestP[conn_fd].passward) >= 12)
+                            if(strlen(requestP[conn_fd].password) >= 12)
                             {
                                 changeStateAndSendUI(conn_fd,2,1,register_pwd_long);
                                 sendUI(conn_fd,register_account);
                             }
-                            else if(strlen(requestP[conn_fd].passward) == 0)
+                            else if(strlen(requestP[conn_fd].password) == 0)
                             {
                                 changeStateAndSendUI(conn_fd,2,1,register_pwd_empty);
                                 sendUI(conn_fd,register_account);
@@ -657,11 +660,18 @@ int main(int argc,char *argv[]){
 
                                 member_list_len++;
                                 strcpy(mem[member_list_len].account,requestP[conn_fd].account);
-                                strcpy(mem[member_list_len].passward,requestP[conn_fd].passward);
+                                strcpy(mem[member_list_len].password,requestP[conn_fd].password);
                                 mem[member_list_len].online = 1;
 
-                                //TODO: update member_list
-                                //TODO: write into file
+                                // update member_list
+                                // write into file
+                                if(fp_mem == NULL){
+                                    printf("fp_mem not found\n");
+                                    exit(1);
+                                }
+                                fputs(requestP[conn_fd].account,fp_mem);
+                                fputs(" ",fp_mem);
+                                fputs(requestP[conn_fd].password,fp_mem);
 
                                 printMainTable(conn_fd, mem, member_list_len, connect_sum);
                                 sendUI(conn_fd, main_menu);
@@ -712,15 +722,16 @@ int main(int argc,char *argv[]){
                                 else 
                                 {
                                     changeStateAndSendUI(conn_fd, 2,2, register_pwd);
+
                                 }
                             }
                             break;
                         }//end(state:2 substate:1)
                         
-                        //state:1 substate:2(login-passward)===========================================
+                        //state:1 substate:2(login-password)===========================================
                         else if(s1 == 1 && s2 == 2)
                         {
-                            strcpy(requestP[conn_fd].passward,requestP[conn_fd].buf);
+                            strcpy(requestP[conn_fd].password,requestP[conn_fd].buf);
 
                             requestP[conn_fd].correct = 0;
                             requestP[conn_fd].is_online = 0;
@@ -728,7 +739,7 @@ int main(int argc,char *argv[]){
                             for(i=0;i<=member_list_len;i++)
                             {
                                 printf("%s\n", mem[i].account);
-                                if(strcmp(requestP[conn_fd].account,mem[i].account) == 0 && strcmp(requestP[conn_fd].passward,mem[i].passward) == 0)
+                                if(strcmp(requestP[conn_fd].account,mem[i].account) == 0 && strcmp(requestP[conn_fd].password,mem[i].password) == 0)
                                 {
                                     requestP[conn_fd].correct = 2;
                                     if(mem[i].online == 1){
