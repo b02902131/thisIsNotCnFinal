@@ -300,16 +300,93 @@ int main(int argc,char *argv[]){
                         //state:4 substate:1(Chat Room)============================================
                         else if(s1 == 4 && s2 == 1)
                         {
-                            
+                            if(strcmp(requestP[conn_fd].buf,"/Home") == 0 || strcmp(requestP[conn_fd].buf,"/home") == 0)
+                            {
+                                changeStateAndSendUI(conn_fd,3,1,main_menu);
+                            }
+                            else
+                            {
+                                char str[100];
+                                strcpy(str, requestP[conn_fd].buf);
+
+                                int isPM = 0;
+                                char *pm_to;
+                                if(str[0] == '/'){
+                                    isPM = 1;
+                                    char *pm_to = strtok (&str[1]," ");
+                                }
+                                
+                                if(isPM == 0)
+                                    sprintf(buf,"\n%s: %s\n\n",requestP[conn_fd].account,str);
+                                else 
+                                    sprintf(buf,"[private message] %s: %s\n\n",requestP[conn_fd].account,str);
+
+                                time_t curtime;
+                                struct tm *loctime;
+
+                                curtime = time(NULL);
+
+                                char str_time[30];
+                                sprintf(str_time,"%s\n", asctime(localtime(&curtime)));
+
+                                for(i=0;i<member_list_len;i++){
+                                    
+                                    int isReceiver =  !isPM || (isPM && (strcmp(pm_to, mem[i].account) == 0));
+                                    if(!isReceiver) continue;
+                                    
+                                    char fp_open_name[20];
+                                    FILE *fp_record;
+                                    
+                                    if(mem[i].online == 1){
+
+                                        for(j=0;j<=connect_sum;j++){
+                                            //mem[i].account = requestP[j].account
+                                            if(strcmp(mem[i].account, requestP[j].account) == 0){
+                                                //Historical message
+                                                if(requestP[j].state == 4 && requestP[j].substate == 1)
+                                                {
+                                                    sprintf(fp_open_name,"history_%s.txt",requestP[j].account);
+                                                    fp_record = fopen(fp_open_name,"a");
+                                                    
+                                                    fputs(buf,fp_record);
+                                                    fputs(str_time,fp_record);
+                                                    fclose(fp_record);
+
+                                                    //Do not send msg back to the sender
+                                                    if(requestP[j].conn_fd != requestP[conn_fd].conn_fd)
+                                                        write(requestP[j].conn_fd,buf,strlen(buf));
+                                                }
+                                            }
+                                        }//end for j loop
+                                    }//end if(mem[i].online == 1) 
+                                    else if(mem[i].online == 0){
+                                        sprintf(fp_open_name,"offline_%s.txt",mem[i].account);
+                                        fp_record = fopen(fp_open_name,"a");
+
+                                        fputs(buf,fp_record);
+                                        fputs(str_time,fp_record);
+                                        fclose(fp_record);
+                                    }
+
+                                    //send msg to person in chat
+                                }
+                            }
+                            break;
                         }//end (state:4 substate:1)
                         
                         //state:3 substate:1(Main table)===========================================
                         else if(s1 == 3 && s2 == 1)
-                        {//*****WORKING HEAD*****
+                        {   
+                            
                             int main_select = atoi(requestP[conn_fd].buf);
+                            printf(":363\n");
                             if(main_select == 1)
                             {
-                                
+                                changeState(conn_fd,4,1);
+                                printMainTable(conn_fd, mem, member_list_len, connect_sum);
+                                sendUI(conn_fd,offline_end);
+                                sendUI(conn_fd,chat_title);
+                                break;
                             }
                             else if(main_select == 2)
                             {
@@ -338,6 +415,7 @@ int main(int argc,char *argv[]){
                             {
                                 changeStateAndSendUI(conn_fd,3,1,select_err);
                                 printMainTable(conn_fd, mem, member_list_len, connect_sum);
+                                sendUI(conn_fd, main_menu);
                             }
                             break;
                         }//end (state:3 substate:1)
@@ -369,6 +447,7 @@ int main(int argc,char *argv[]){
                                 //TODO: write into file
 
                                 printMainTable(conn_fd, mem, member_list_len, connect_sum);
+                                sendUI(conn_fd, main_menu);
                             }
                             break;
                         }//end (state:2 substate:2)
@@ -456,6 +535,7 @@ int main(int argc,char *argv[]){
                             {
                                 changeState(conn_fd,3,1);
                                 printMainTable(conn_fd, mem, member_list_len, connect_sum);
+                                sendUI(conn_fd, main_menu);
                             }
                             else if(requestP[conn_fd].correct == 2 &&requestP[conn_fd].is_online == 1)
                             {
@@ -491,7 +571,7 @@ int main(int argc,char *argv[]){
                         {
                             int login_table_input = atoi(requestP[conn_fd].buf);
 
-                            if(login_table_input < 1 && login_table_input > 3){
+                            if(login_table_input != 1 && login_table_input != 2 && login_table_input != 3){
                                 changeStateAndSendUI(conn_fd, 0, 0, select_err);
                                 sendUI(conn_fd, login_table);   
                             }
@@ -572,7 +652,6 @@ static void printMainTable(int conn_fd, member * mem, int member_list_len, int c
         }//end else(mem[i].online == 0)    
     }//end for-loop
 
-    sendUI(conn_fd, main_menu);
 }
 
 static void sendUI(int conn_fd, char * ui){
