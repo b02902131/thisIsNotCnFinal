@@ -317,7 +317,10 @@ int main(int argc,char *argv[]){
                         //state:2 substate:1(Create-account)===========================================
                         else if(s1 == 2 && s2 == 1)
                         {
-                            
+                            strcpy(requestP[conn_fd].account,requestP[conn_fd].buf);
+
+                            request[conn_fd]
+                            //*****WORKING HEAD*****
                         }//end(state:2 substate:1)
                         
                         //state:1 substate:2(login-passward)===========================================
@@ -363,9 +366,9 @@ int main(int argc,char *argv[]){
                             }
                             else
                             {
-                            //*****WORKING HEAD*****
-                                changeStateAndSendUI(conn_fd,0,0,login_error);
-                                
+                                changeState(conn_fd,0,0);
+                                sendUI(conn_fd,login_error);
+                                sendUI(conn_fd,login_table);
                             }
                             break;
                         }//end else if(state:1 substate:2)
