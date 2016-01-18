@@ -331,7 +331,9 @@ int main(int argc,char *argv[]){
 
                                 for(i=0;i<member_list_len;i++){
                                     
-                                    int isReceiver =  !isPM || (isPM && (strcmp(pm_to, mem[i].account) == 0));
+                                    int isReceiver = 0;
+                                    if(!isPM) isReceiver = 1;
+                                    else if (isPM && (strcmp(pm_to, mem[i].account) == 0)) isReceiver = 1;
                                     if(!isReceiver) continue;
                                     
                                     char fp_open_name[20];
