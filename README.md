@@ -17,3 +17,4 @@ ver1.6beta
 ver1.6.1 5_1home
 ver1.9 file sender
 ver2.0 update member.txt
+ver2.1beta

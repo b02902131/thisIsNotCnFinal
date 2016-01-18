@@ -9,7 +9,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <time.h>
-#include "title.c"
+#include "title.h"
 
 #define ERR_EXIT(a) { perror(a); exit(1); }
 #define MAX_DATA 1000
@@ -665,13 +665,16 @@ int main(int argc,char *argv[]){
 
                                 // update member_list
                                 // write into file
-                                if(fp_mem == NULL){
+                                FILE * fp_mem2 = fopen("member.txt","a");
+                                if(fp_mem2 == NULL){
                                     printf("fp_mem not found\n");
                                     exit(1);
                                 }
-                                fputs(requestP[conn_fd].account,fp_mem);
-                                fputs(" ",fp_mem);
-                                fputs(requestP[conn_fd].password,fp_mem);
+                                fputs(requestP[conn_fd].account,fp_mem2);
+                                fputs(" ",fp_mem2);
+                                fputs(requestP[conn_fd].password,fp_mem2);
+                                fputs("\n",fp_mem2);
+                                fclose(fp_mem2);
 
                                 printMainTable(conn_fd, mem, member_list_len, connect_sum);
                                 sendUI(conn_fd, main_menu);
