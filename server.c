@@ -305,7 +305,7 @@ int main(int argc,char *argv[]){
                         //state:3 substate:1(Main table)===========================================
                         else if(s1 == 3 && s2 == 1)
                         {
-                            
+                            break;
                         }//end (state:3 substate:1)
                         
                         //state:2 substate:2(Create-passward)==========================================
@@ -358,13 +358,16 @@ int main(int argc,char *argv[]){
                             }
                             else if(requestP[conn_fd].correct == 2 &&requestP[conn_fd].is_online == 1)
                             {
-                            //*****WORKING HEAD*****
+                                changeStateAndSendUI(conn_fd,1,1,login_online);
+                                sendUI(conn_fd, login_account);
                             }
                             else
                             {
+                            //*****WORKING HEAD*****
                                 changeStateAndSendUI(conn_fd,0,0,login_error);
-
+                                
                             }
+                            break;
                         }//end else if(state:1 substate:2)
                         
                         //state:1 substate:1(login-account)============================================
@@ -385,6 +388,7 @@ int main(int argc,char *argv[]){
                         //state:0 substate:0(login table)==============================================
                         else if(s1 == 0 && s2 == 0)
                         {
+                            printf(":390\n");
                             int login_table_input = atoi(requestP[conn_fd].buf);
 
                             if(login_table_input != 1 && login_table_input !=2){
@@ -451,6 +455,8 @@ static void printMainTable(int conn_fd, member* mem, int member_list_len, int co
             }    
         }//end else(mem[i].online == 0)    
     }//end for-loop
+
+    sendUI(conn_fd, main_menu);
 }
 
 static void sendUI(int conn_fd, char * ui){
