@@ -410,7 +410,7 @@ int main(int argc,char *argv[]){
                                 sendUI(conn_fd,chat_title);
 
                                 //knocking
-                                sprintf(buf, "[system] %s is online.", requestP[conn_fd].account);
+                                sprintf(buf, "[system] %s is online.\n\n", requestP[conn_fd].account);
                                 for(i=0;i<=member_list_len;i++){
                                     printf("415:\n");
                                     if(mem[i].online == 1){
@@ -418,7 +418,7 @@ int main(int argc,char *argv[]){
                                             printf("418:\n");
                                             if(strcmp(mem[i].account, requestP[j].account) == 0){
                                                 if(requestP[j].state == 4){
-                                                    printf("421: \n");
+                                                    printf("421: buf = %s requestP[%d] = %s\n", buf, j, requestP[j].account);
                                                     sendUI(j, buf);
                                                 }
                                             }
