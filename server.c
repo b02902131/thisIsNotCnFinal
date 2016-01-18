@@ -311,16 +311,55 @@ int main(int argc,char *argv[]){
                         //state:2 substate:2(Create-passward)==========================================
                         else if(s1 == 2 && s2 == 2)
                         {
-                            
+                            break;
                         }//end (state:2 substate:2)
+
+                            //*****WORKING HEAD*****
                         
                         //state:2 substate:1(Create-account)===========================================
                         else if(s1 == 2 && s2 == 1)
                         {
                             strcpy(requestP[conn_fd].account,requestP[conn_fd].buf);
 
-                            // request[conn_fd]
-                            //*****WORKING HEAD*****
+                            requestP[conn_fd].correct = 0;
+
+                            //Account is longer than 10 words
+                            if(strlen(requestP[conn_fd].account) >= 12)
+                            {
+                                changeState(conn_fd,2,1);
+                                sendUI(conn_fd,register_account_long);
+                                sendUI(conn_fd,register_account);
+                            }
+                            //you do not enter any account
+                            else if(strlen(requestP[conn_fd].account) == 0)
+                            {
+                                changeState(conn_fd,2,1);
+                                sendUI(conn_fd, register_account_empty);
+                                sendUI(conn_fd, register_account);
+                            }
+                            //you have enter any account and its length is correct
+                            else {
+                                //check whether the account has been used
+                                for(i=0;i<=member_list_len;i++)
+                                {
+                                    if(strcmp(requestP[conn_fd].account,mem[i].account) == 0)
+                                    {
+                                        requestP[conn_fd].correct ++;
+                                    }
+                                }
+                                //Account has been use
+                                if(requestP[conn_fd].correct != 0)
+                                {
+                                    changeState(conn_fd,2,1);
+                                    sendUI(conn_fd, register_account_used);
+                                    sendUI(conn_fd, register_account);
+                                }
+                                else 
+                                {
+                                    changeStateAndSendUI(conn_fd, 2,2, register_pwd);
+                                }
+                            }
+                            break;
                         }//end(state:2 substate:1)
                         
                         //state:1 substate:2(login-passward)===========================================
