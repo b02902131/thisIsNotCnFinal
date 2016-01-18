@@ -62,6 +62,7 @@ int maxfd;  // size of open file descriptor table, size of request list
 
 
 // my function
+static void broadcast(char * buf, member * mem, int member_list_len, int connect_sum);
 static void setMemOB(int conn_fd, int online, int busy, member * mem, int member_list_len);
 static void printMainTable(int conn_fd, member* mem, int member_list_len, int connect_sum);
 static void sendUI(int conn_fd, char * ui);
@@ -303,6 +304,9 @@ int main(int argc,char *argv[]){
                             if(strcmp(requestP[conn_fd].buf,"/Home") == 0 || strcmp(requestP[conn_fd].buf,"/home") == 0)
                             {
                                 changeStateAndSendUI(conn_fd,3,1,main_menu);
+                                //broad cast
+                                sprintf(buf, "[system] %s exits the room.\n\n", requestP[conn_fd].account);
+                                broadcast(buf, mem, member_list_len, connect_sum);
                             }
                             else
                             {
@@ -420,22 +424,9 @@ int main(int argc,char *argv[]){
                                 sendUI(conn_fd,offline_end);
                                 sendUI(conn_fd,chat_title);
 
-                                //knocking
-                                sprintf(buf, "[system] %s is online.\n\n", requestP[conn_fd].account);
-                                for(i=0;i<=member_list_len;i++){
-                                    printf("415:\n");
-                                    if(mem[i].online == 1){
-                                        for(j=0;j<=connect_sum;j++){
-                                            printf("418:\n");
-                                            if(strcmp(mem[i].account, requestP[j].account) == 0){
-                                                if(requestP[j].state == 4){
-                                                    printf("421: buf = %s requestP[%d] = %s\n", buf, j, requestP[j].account);
-                                                    sendUI(j, buf);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+                                //broad cast
+                                sprintf(buf, "[system] %s gets in the room.\n\n", requestP[conn_fd].account);
+                                broadcast(buf, mem, member_list_len, connect_sum);
                                 break;
                             }
                             else if(main_select == 2)
@@ -669,6 +660,21 @@ int main(int argc,char *argv[]){
 
 
 //my function ============================================================================================//
+static void broadcast(char * buf, member * mem, int member_list_len, int connect_sum){
+    int i,j;
+    for(i=0;i<=member_list_len;i++){
+        if(mem[i].online == 1){
+            for(j=0;j<=connect_sum;j++){
+                if(strcmp(mem[i].account, requestP[j].account) == 0){
+                    if(requestP[j].state == 4){
+                        sendUI(j, buf);
+                    }
+                }
+            }
+        }
+    }
+}
+
 static void setMemOB(int conn_fd, int online, int busy, member * mem, int member_list_len){
     int i;
     for(i=0;i<=member_list_len;i++){
