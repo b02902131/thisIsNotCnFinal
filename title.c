@@ -49,7 +49,7 @@ char *file_err4 = "\n------------------------------ Error ----------------------
 
 //Sending
 char *sending_title1 = "\n------------------------------ Sending ----------------------------\nReceiver:";
-char *sending_title2 = "\nPlease input Files' names you want to send(At most 5 files)\n";
+char *sending_title2 = "\nPlease input Files' names you want to send (no space)\n";
 char *sending_err1 = "\n------------------------------ Error ------------------------------\n*Warning:You can not send more than 5 files at the same time!!!\n=> Please enter again!!!\n";
 char *sending_finish = "\n=> Please input '/Home' if you want back\n";
 

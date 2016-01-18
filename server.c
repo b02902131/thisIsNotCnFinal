@@ -14,7 +14,7 @@
 #define ERR_EXIT(a) { perror(a); exit(1); }
 #define MAX_DATA 1000
 #define max_member 50
-#define MAXBUF 1024
+#define MAXBUF 262144
 
 typedef struct
 {
@@ -260,14 +260,18 @@ int main(int argc,char *argv[]){
                         int s2 = requestP[conn_fd].substate;
 
                         //state:8 substate:2(File Transfer-Sending finish)=============================
-                        if(s1 == 8 && s2 == 2){
-
-                        }//end state:8 substate:2(File Transfer-Sending finish)=============================
-
                         //state:8 substate:1(File Transfer-Receiving)==================================
-                        else if(s1 == 8 && s2 == 1)
+                        if(s1 == 8)
                         {
-
+                            char tmp_receiving[20];
+                            strcpy(tmp_receiving, requestP[conn_fd].buf);
+                            if(strcmp(requestP[conn_fd].buf,"/Home") == 0 || strcmp(requestP[conn_fd].buf,"/home") == 0)
+                            {
+                                changeState(conn_fd,3,1);
+                                printMainTable(conn_fd, mem, member_list_len, connect_sum);
+                                sendUI(conn_fd, main_menu);
+                            }
+                            break;
                         }//end (state:8 substate:1)
 
                         //state:7 substate:1(Offline Message)=====================================
@@ -284,7 +288,38 @@ int main(int argc,char *argv[]){
                         //state:5 substate:3(File Transfer- Enter file name)===========================
                         else if(s1 == 5 && s2 == 3)
                         {
+                            if(strcmp(requestP[conn_fd].buf,"/Home") == 0 || strcmp(requestP[conn_fd].buf,"/home") == 0)
+                            {
+                                changeState(conn_fd,3,1);
+                                printMainTable(conn_fd, mem, member_list_len, connect_sum);
+                                sendUI(conn_fd, main_menu);
+                                break;
+                            }
+                            char file_name[100];
 
+                            strcpy(file_name, requestP[conn_fd].buf);
+
+                            char *pch = strtok(file_name," ");
+
+                            sprintf(buf, "sending: %s\n", file_name);
+                            sendUI(conn_fd, buf);
+
+                            FILE *fp_transfer = fopen(file_name, "a");
+
+                            if(fp == NULL)
+                            {
+                                sprintf(buf, "File:%s Can not open to write\n",file_name);
+                                changeStateAndSendUI(conn_fd, 5, 3, buf);
+                                sendUI(conn_fd, sending_title2);
+                                break;
+                            }
+
+                            char buf_file[MAXBUF];
+
+                            int length = 0;
+                            while((length = read(requestP[conn_fd].conn_fd,buf_file,MAXBUF)) > 0){
+
+                            }
                         }//end (state:5 substate:3)
 
                         //state:5 substate:2(File Transfer- Enter friend ID)===========================
@@ -294,6 +329,7 @@ int main(int argc,char *argv[]){
                             {
                                 changeState(conn_fd,3,1);
                                 printMainTable(conn_fd, mem, member_list_len, connect_sum);
+                                sendUI(conn_fd, main_menu);
                             }
                             else
                             {
@@ -344,6 +380,9 @@ int main(int argc,char *argv[]){
                             if(file_select == 1){
                                 changeState(conn_fd, 5, 2);
                                 printFileTransfer(conn_fd, mem, member_list_len, connect_sum);
+                            }
+                            else if(file_select == 2){
+                                changeStateAndSendUI(conn_fd, 8, 1, receiving_title);
                             }
                         }//end (state:5 substate:1)
                         

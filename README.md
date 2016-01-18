@@ -13,3 +13,4 @@ ver1.4.5 broadcast
 ver1.5 state6
 ver1.5 state6,7
 ver1.6 beta
+ver1.6beta
