@@ -311,6 +311,31 @@ int main(int argc,char *argv[]){
                         //state:2 substate:2(Create-passward)==========================================
                         else if(s1 == 2 && s2 == 2)
                         {
+                            strcpy(requestP[conn_fd].passward,requestP[conn_fd].buf);
+                            requestP[conn_fd].correct = 0;
+                            if(strlen(requestP[conn_fd].passward) >= 12)
+                            {
+                                changeStateAndSendUI(conn_fd,2,1,register_pwd_long);
+                                sendUI(conn_fd,register_account);
+                            }
+                            else if(strlen(requestP[conn_fd].passward) == 0)
+                            {
+                                changeStateAndSendUI(conn_fd,2,1,register_pwd_empty);
+                                sendUI(conn_fd,register_account);
+                            }
+                            else{
+                                changeState(conn_fd,3,1);
+
+                                member_list_len++;
+                                strcpy(mem[member_list_len].account,requestP[conn_fd].account);
+                                strcpy(mem[member_list_len].passward,requestP[conn_fd].passward);
+                                mem[member_list_len].online = 1;
+
+                                //TODO: update member_list
+                                //TODO: write into file
+
+                                printMainTable(conn_fd, mem, member_list_len, connect_sum);
+                            }
                             break;
                         }//end (state:2 substate:2)
 
@@ -430,7 +455,6 @@ int main(int argc,char *argv[]){
                         //state:0 substate:0(login table)==============================================
                         else if(s1 == 0 && s2 == 0)
                         {
-                            printf(":390\n");
                             int login_table_input = atoi(requestP[conn_fd].buf);
 
                             if(login_table_input != 1 && login_table_input !=2){
