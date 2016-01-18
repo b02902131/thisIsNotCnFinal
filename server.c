@@ -14,7 +14,7 @@
 #define ERR_EXIT(a) { perror(a); exit(1); }
 #define MAX_DATA 1000
 #define max_member 50
-#define MAXBUF 262144
+#define MAXBUF 1024
 
 typedef struct
 {
@@ -306,7 +306,7 @@ int main(int argc,char *argv[]){
 
                             FILE *fp_transfer = fopen(file_name, "a");
 
-                            if(fp == NULL)
+                            if(fp_transfer == NULL)
                             {
                                 sprintf(buf, "File:%s Can not open to write\n",file_name);
                                 changeStateAndSendUI(conn_fd, 5, 3, buf);
@@ -315,11 +315,74 @@ int main(int argc,char *argv[]){
                             }
 
                             char buf_file[MAXBUF];
-
                             int length = 0;
-                            while((length = read(requestP[conn_fd].conn_fd,buf_file,MAXBUF)) > 0){
 
+                            bzero(buf_file,MAXBUF);
+
+                            while((length = read(requestP[conn_fd].conn_fd,buf_file,MAXBUF)) > 0){
+                                int t;
+                                int finish_flag = 0;
+                                for(t=0;t<length;t++){
+                                    if(buf_file[t]=='F' && buf_file[t+1] == 'i' && buf_file[t+2]=='n')
+                                    {
+                                        finish_flag = 1;
+                                    }
+                                }
+                                if(finish_flag == 1) break;
+
+                                fwrite(buf_file, sizeof(char), length, fp_transfer);
+                                bzero(buf_file,MAXBUF);
+
+                            }//end while
+
+                            printf("Receive File: %s Successful!!!\n",file_name);
+                            fclose(fp);
+
+                            char receiver[20];
+                            int receiver_fd;
+                            strcpy(receiver, mem[requestP[conn_fd].send_to_mem_id].account);
+
+                            for(j=0;j<=connect_sum;j++){
+                                if(strcmp(receiver,requestP[j].account) == 0){
+                                    receiver_fd = requestP[j].conn_fd;
+                                    break;
+                                }
                             }
+
+                            sprintf(buf,"Receiving:%s\nFrom:%s\n",file_name,requestP[conn_fd].account);
+                            write(receiver_fd, buf, strlen(buf));
+
+                            //Start sending
+                            FILE *fp2 = fopen(file_name, "rb");
+
+                            if(fp2 == NULL){
+                                printf("File: %s is not found!!!\n",file_name);
+                                exit(1);
+                            }
+                            
+                            while(1)
+                            {
+                                int file_block_length = 0;
+                                bzero(buf_file, MAXBUF);
+
+                                file_block_length = fread(buf_file,sizeof(char),MAXBUF,fp2);
+
+                                if(file_block_length>0){
+                                    write(receiver_fd, buf_file, file_block_length);
+                                }
+                                if(file_block_length < MAXBUF)
+                                {
+                                    if(ferror(fp2)) printf("Error reading\n");
+
+                                    char *finish_str = "Finish\n";
+                                    write(receiver_fd, finish_str, strlen(finish_str));
+
+                                    break;
+                                }
+                            }   //end while(1)
+
+                            printf("Send File: %s Successful!!!\n",file_name);
+                            fclose(fp);
                         }//end (state:5 substate:3)
 
                         //state:5 substate:2(File Transfer- Enter friend ID)===========================
