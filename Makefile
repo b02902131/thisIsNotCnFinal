@@ -1,6 +1,6 @@
 all: server client
 
-server: server.c
+server: server.c title.c
 	gcc server.c -D CHAT_SERVER -o chat_server
 
 client: client.c
@@ -10,6 +10,7 @@ clean:
 	rm -f chat_server 
 
 put:
+	scp ./title.c linux7:~/cn/cn_final/
 	scp ./server.c linux7:~/cn/cn_final/
 	scp ./client.c linux7:~/cn/cn_final/
 	scp ./Makefile linux7:~/cn/cn_final/
