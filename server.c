@@ -388,12 +388,17 @@ int main(int argc,char *argv[]){
                                         fputs(str_time,fp_record);
                                         fclose(fp_record);
 
-                                        if(isPM) sendUI(conn_fd, "this account is not online\n\n");
+                                        if(isPM) {
+                                            sendUI(conn_fd, "this account is not online\n\n");
+                                            break;
+                                        }
                                     }
-
-                                    //send msg to person in chat
                                 }
-                            }
+                                if(isPM){
+                                    //if reach here, means PM success
+                                    sendUI(conn_fd, str_time);
+                                }
+                            }// end else
                             break;
                         }//end (state:4 substate:1)
                         
