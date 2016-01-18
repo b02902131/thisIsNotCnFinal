@@ -381,7 +381,6 @@ int main(int argc,char *argv[]){
                         {   
                             
                             int main_select = atoi(requestP[conn_fd].buf);
-                            printf(":363\n");
                             if(main_select == 1)
                             {
                                 changeState(conn_fd,4,1);
