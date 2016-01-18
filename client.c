@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
     serv_name.sin_family = AF_INET;
     
     struct hostent *hp;
-    char *host_str = "linux20.csie.ntu.edu.tw";
+    char *host_str = "linux7.csie.ntu.edu.tw";
     // char *host_str = "127.0.0.1";
     
     hp = gethostbyname(host_str);
