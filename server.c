@@ -271,13 +271,20 @@ int main(int argc,char *argv[]){
                         //state:7 substate:1(Offline Message)=====================================
                         else if(s1 == 7 && s2 == 1)
                         {
-                            
+                            if(strcmp(requestP[conn_fd].buf,"/Home") == 0 || strcmp(requestP[conn_fd].buf,"/home") == 0)
+                            {
+                                changeStateAndSendUI(conn_fd,3,1,main_menu);
+                            }
                         }//end (state:7 substate:1)
 
                         //state:6 substate:1(Historical Message)==================================
                         else if(s1 == 6 && s2 == 1)
                         {
-                            
+                            if(strcmp(requestP[conn_fd].buf,"/Home") == 0 || strcmp(requestP[conn_fd].buf,"/home") == 0)
+                            {
+                                changeStateAndSendUI(conn_fd,3,1,main_menu);
+                            }
+                            break; 
                         }//end (state:6 substate:1)
 
                         //state:5 substate:3(File Transfer- Enter file name)===========================
@@ -433,16 +440,19 @@ int main(int argc,char *argv[]){
                             {
                                 changeStateAndSendUI(conn_fd,5,1,file_tran_title);
                             }
-                            else if(main_select == 3)
+                            else if(main_select == 3 || main_select ==4)
                             {
                                 char filename[20];
-                                sprintf(filename, "history_%s.txt",requestP[conn_fd].account);
+                                if(main_select == 3)
+                                    sprintf(filename, "history_%s.txt",requestP[conn_fd].account);
+                                else
+                                    sprintf(filename, "offline_%s.txt",requestP[conn_fd].account);
 
                                 FILE *file_p;
                                 file_p = fopen(filename,"r");
                                 char tmp_history[128];
 
-                                sendUI(conn_fd, history_title);
+                                sendUI(conn_fd, main_select==3? history_title : offline_title);
                                 if(!file_p){
                                     sendUI(conn_fd,"\n there is no record. \n\n");
                                 }
@@ -453,10 +463,6 @@ int main(int argc,char *argv[]){
                                 }
                                 sendUI(conn_fd, history_end);
                                 changeState(conn_fd,6,1);
-                            }
-                            else if(main_select == 4)
-                            {
-
                             }
                             else if(main_select == 5)
                             {
