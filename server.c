@@ -62,6 +62,7 @@ int maxfd;  // size of open file descriptor table, size of request list
 
 
 // my function
+static void printMainTable(int conn_fd, member* mem, int member_list_len, int connect_sum);
 static void sendUI(int conn_fd, char * ui);
 static void changeStateAndSendUI(int conn_fd, int state, int substate, char * ui);
 static void changeState(int conn_fd, int state, int substate);
@@ -135,7 +136,7 @@ int main(int argc,char *argv[]){
         strcpy(mem[i].passward,temp_passward);
     }
     member_list_len = i;
-
+    printf("139: member_list_len = %d\n", member_list_len);
     for(i=0;i<max_member;i++){
     	mem[i].online = 0;
     	mem[i].busy = 0;
@@ -330,6 +331,7 @@ int main(int argc,char *argv[]){
 
                             for(i=0;i<=member_list_len;i++)
                             {
+                                printf("%s\n", mem[i].account);
                                 if(strcmp(requestP[conn_fd].account,mem[i].account) == 0 && strcmp(requestP[conn_fd].passward,mem[i].passward) == 0)
                                 {
                                     requestP[conn_fd].correct = 2;
@@ -349,12 +351,11 @@ int main(int argc,char *argv[]){
                                 requestP[conn_fd].login_error++;
                                 printf("login_error:%d\n",requestP[conn_fd].login_error);
                             }
-
+                            //Correct account & no online
                             if(requestP[conn_fd].correct == 2 && requestP[conn_fd].is_online == 0)
                             {
                                 changeState(conn_fd,3,1);
-
-
+                                printMainTable(conn_fd, mem, member_list_len, connect_sum);
                             }
                             else if(requestP[conn_fd].correct == 2 &&requestP[conn_fd].is_online == 1)
                             {
@@ -362,6 +363,7 @@ int main(int argc,char *argv[]){
                             else
                             {
                                 changeStateAndSendUI(conn_fd,0,0,login_error);
+
                             }
                             //*****WORKING HEAD*****
                         }//end else if(state:1 substate:2)
@@ -410,6 +412,47 @@ int main(int argc,char *argv[]){
 
 
 //my function ============================================================================================//
+
+static void printMainTable(int conn_fd, member* mem, int member_list_len, int connect_sum){
+    int i, j;
+    char buf[512];
+    for(i=0;i<=member_list_len;i++)
+        for(j=0;j<=connect_sum;j++){
+            if(strcmp(mem[i].account,requestP[j].account) == 0){
+                if(mem[i].online == 1 && requestP[j].state == 4 && requestP[j].substate == 1)
+                    mem[i].busy = 1;
+                else
+                    mem[i].busy = 0;
+            }
+        }
+    sendUI(conn_fd, main_title);
+
+    char hello_title[20];
+    sprintf(hello_title,"Hello,%s",requestP[conn_fd].account);
+    sendUI(conn_fd, hello_title);
+    sendUI(conn_fd, main_friend_title1);
+    sendUI(conn_fd, main_friend_title2);
+    sendUI(conn_fd, main_friend_title3);
+
+    for(i=0;i<=member_list_len;i++){
+        if(mem[i].online == 0){
+            if(mem[i].busy == 0){
+                sprintf(buf,"                                            %d              %s\n",i+1,mem[i].account);
+                write(requestP[conn_fd].conn_fd, buf, strlen(buf));
+            }
+        }
+        else{
+            if(mem[i].busy == 0){
+                sprintf(buf,"       *                                    %d              %s\n",i+1,mem[i].account);
+                write(requestP[conn_fd].conn_fd, buf, strlen(buf));
+            }
+            else{
+                sprintf(buf,"       *                *                   %d              %s\n",i+1,mem[i].account);
+                write(requestP[conn_fd].conn_fd, buf, strlen(buf));
+            }    
+        }//end else(mem[i].online == 0)    
+    }//end for-loop
+}
 
 static void sendUI(int conn_fd, char * ui){
     char buf[512];

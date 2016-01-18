@@ -7,11 +7,7 @@ char *login_account = "\n------------------------------ Login ------------------
 char *login_pwd = "2.Passward:\n";
 char *login_account_empty = "\n------------------------------ Error ------------------------------\n*Warning:You did not enter any account!!!\n=> Please enter again!!!\n";
 char *login_online = "\n------------------------------ Error ------------------------------\n*Warning:You have login,you cannot login twice!!!\n";
-char *login_error = "\n------------------------------ Error ------------------------------\n*Warning:Your account and passward is error!!!\n=> Please try it again!!!\n";
-char *login_error1 = "\n*Warning:You have three chance!!!\n=> Error:1\n";
-char *login_error2 = "\n*Warning:You have three chance!!!\n=> Error:2\n";
-char *login_error3 = "\n*Warning:You have three chance!!!\n=> Error:3\n";
-char *login_error4 = "\n*Warning:You have error more than three times!!!\n=> Please try it again!!!\n";
+char *login_error = "\n------------------------------ Error ------------------------------\n*Warning:Wrong Passward or Account!!!\n";	//bigyo edited
 
 //Register
 char *register_account = "\n------------------------ Create New Account -----------------------\nWarning:All should shorter than 10 words!\n1.Account:\n";

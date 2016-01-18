@@ -10,7 +10,7 @@ clean:
 	rm -f chat_server 
 
 put:
-	scp ./title.c linux7:~/cn/cn_final/
-	scp ./server.c linux7:~/cn/cn_final/
-	scp ./client.c linux7:~/cn/cn_final/
-	scp ./Makefile linux7:~/cn/cn_final/
+	scp ./title.c linux20:~/cn/cn_final/
+	scp ./server.c linux20:~/cn/cn_final/
+	scp ./client.c linux20:~/cn/cn_final/
+	scp ./Makefile linux20:~/cn/cn_final/
