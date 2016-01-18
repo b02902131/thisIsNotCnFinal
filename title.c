@@ -8,15 +8,15 @@ char *login_online = "\n------------------------------ Error -------------------
 char *login_error = "\n------------------------------ Error ------------------------------\n*Warning:Your account and passward is error!!!\n=> Please try it again!!!\n";
 
 //Register
-char *register_account = "\n------------------------ Create New Account -----------------------\nWarning:All should shorter than 10 words!\n1.Account:\n";
+char *register_account = "\n------------------------ Create New Account -----------------------\nWarning:All shouldn't be longer than 12 words!\n1.Account:\n";
 char *register_pwd = "2.Passward:\n";
 
 char *register_account_empty = "\n------------------------------ Error ------------------------------\n*Warning:You did not enter any account!!!\n=> Please create again!!!\n";
-char *register_account_long = "\n------------------------------ Error ------------------------------\n*Warning:Your account is longer than 10 words!!!\n=> Please create again!!!\n";
+char *register_account_long = "\n------------------------------ Error ------------------------------\n*Warning:Your account is longer than 12 words!!!\n=> Please create again!!!\n";
 char *register_account_used = "\n------------------------------ Error ------------------------------\n*Warning:This account has been used!!!\n=> Please create again!!!\n";
 
 char *register_pwd_empty = "\n------------------------------ Error ------------------------------\n*Warning:You did not enter any passward!!!\n=> Please create again!!!\n";
-char *register_pwd_long = "\n------------------------------ Error ------------------------------\n*Warning:Your passward is longer than 10 words!!!\n=> Please create again!!!\n";
+char *register_pwd_long = "\n------------------------------ Error ------------------------------\n*Warning:Your passward is longer than 12 words!!!\n=> Please create again!!!\n";
 
 //Main
 char *main_title = "\n==================== Welcome to group 6 for cn ====================\n";
