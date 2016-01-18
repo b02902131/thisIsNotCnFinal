@@ -313,15 +313,15 @@ int main(int argc,char *argv[]){
                                 char *pm_to;
                                 if(str[0] == '/'){
                                     isPM = 1;
-                                    char *pm_to = strtok (&str[1]," ");
+                                    pm_to = strtok (&str[1]," ");
                                 }
-                                printf("318: isPM = %d\n",isPM);
+                                printf("318: isPM = %d, pm_to = %s\n",isPM, pm_to);
                                 printf("319: member_list_len = %d \n", member_list_len);
                                 
                                 if(isPM == 0)
                                     sprintf(buf,"\n%s: %s\n",requestP[conn_fd].account,str);
                                 else 
-                                    sprintf(buf,"[private message] %s: %s\n",requestP[conn_fd].account,str);
+                                    sprintf(buf,"[toe toe talk] %s: %s\n",requestP[conn_fd].account,str);
 
                                 time_t curtime;
                                 struct tm *loctime;
