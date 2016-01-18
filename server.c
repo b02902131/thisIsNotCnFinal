@@ -319,9 +319,23 @@ int main(int argc,char *argv[]){
                                 printf("319: member_list_len = %d \n", member_list_len);
                                 
                                 if(isPM == 0)
-                                    sprintf(buf,"\n%s: %s\n",requestP[conn_fd].account,str);
+                                    sprintf(buf,"%s: %s\n",requestP[conn_fd].account, requestP[conn_fd].buf);
                                 else 
-                                    sprintf(buf,"[toe toe talk] %s: %s\n",requestP[conn_fd].account,str);
+                                    sprintf(buf,"[toe toe talk] %s: %s\n",requestP[conn_fd].account, &requestP[conn_fd].buf[2+strlen(pm_to)]);
+
+                                if(isPM){
+                                    int account_avaible = 0;
+                                    for(i=0;i<=member_list_len;i++){
+                                        if(strcmp(pm_to, mem[i].account) == 0){
+                                            account_avaible = 1;
+                                            break;
+                                        }
+                                    }
+                                    if(account_avaible == 0){
+                                        sendUI(conn_fd,"this ID doesn't exit\n\n");
+                                        break;
+                                    }
+                                }
 
                                 time_t curtime;
                                 struct tm *loctime;
@@ -373,6 +387,8 @@ int main(int argc,char *argv[]){
                                         fputs(buf,fp_record);
                                         fputs(str_time,fp_record);
                                         fclose(fp_record);
+
+                                        if(isPM) sendUI(conn_fd, "this account is not online\n\n");
                                     }
 
                                     //send msg to person in chat
@@ -392,6 +408,23 @@ int main(int argc,char *argv[]){
                                 printMainTable(conn_fd, mem, member_list_len, connect_sum);
                                 sendUI(conn_fd,offline_end);
                                 sendUI(conn_fd,chat_title);
+
+                                //knocking
+                                sprintf(buf, "[system] %s is online.", requestP[conn_fd].account);
+                                for(i=0;i<=member_list_len;i++){
+                                    printf("415:\n");
+                                    if(mem[i].online == 1){
+                                        for(j=0;j<=connect_sum;j++){
+                                            printf("418:\n");
+                                            if(strcmp(mem[i].account, requestP[j].account) == 0){
+                                                if(requestP[j].state == 4){
+                                                    printf("421: \n");
+                                                    sendUI(j, buf);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                                 break;
                             }
                             else if(main_select == 2)
