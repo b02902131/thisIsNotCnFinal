@@ -9,7 +9,7 @@ client: client.c
 clean:
 	rm -f chat_server 
 
-put:
+put: server
 	scp ./title.c linux20:~/cn/cn_final/
 	scp ./server.c linux20:~/cn/cn_final/
 	scp ./client.c linux20:~/cn/cn_final/

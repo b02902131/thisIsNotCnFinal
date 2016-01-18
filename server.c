@@ -315,11 +315,13 @@ int main(int argc,char *argv[]){
                                     isPM = 1;
                                     char *pm_to = strtok (&str[1]," ");
                                 }
+                                printf("318: isPM = %d\n",isPM);
+                                printf("319: member_list_len = %d \n", member_list_len);
                                 
                                 if(isPM == 0)
-                                    sprintf(buf,"\n%s: %s\n\n",requestP[conn_fd].account,str);
+                                    sprintf(buf,"\n%s: %s\n",requestP[conn_fd].account,str);
                                 else 
-                                    sprintf(buf,"[private message] %s: %s\n\n",requestP[conn_fd].account,str);
+                                    sprintf(buf,"[private message] %s: %s\n",requestP[conn_fd].account,str);
 
                                 time_t curtime;
                                 struct tm *loctime;
@@ -329,8 +331,8 @@ int main(int argc,char *argv[]){
                                 char str_time[30];
                                 sprintf(str_time,"%s\n", asctime(localtime(&curtime)));
 
-                                for(i=0;i<member_list_len;i++){
-                                    
+                                for(i=0;i<=member_list_len;i++){
+                                    printf("335: mem[%d].account = %s\n", i, mem[i].account);
                                     int isReceiver = 0;
                                     if(!isPM) isReceiver = 1;
                                     else if (isPM && (strcmp(pm_to, mem[i].account) == 0)) isReceiver = 1;
@@ -340,13 +342,15 @@ int main(int argc,char *argv[]){
                                     FILE *fp_record;
                                     
                                     if(mem[i].online == 1){
-
+                                        printf("345:\n");
                                         for(j=0;j<=connect_sum;j++){
+                                            printf("347: requestP[%d] = %s\n", j, requestP[j].account);
                                             //mem[i].account = requestP[j].account
                                             if(strcmp(mem[i].account, requestP[j].account) == 0){
                                                 //Historical message
                                                 if(requestP[j].state == 4 && requestP[j].substate == 1)
                                                 {
+                                                    printf("352: p = %s\n", requestP[j].account);
                                                     sprintf(fp_open_name,"history_%s.txt",requestP[j].account);
                                                     fp_record = fopen(fp_open_name,"a");
                                                     
@@ -357,6 +361,7 @@ int main(int argc,char *argv[]){
                                                     //Do not send msg back to the sender
                                                     if(requestP[j].conn_fd != requestP[conn_fd].conn_fd)
                                                         write(requestP[j].conn_fd,buf,strlen(buf));
+                                                    write(requestP[j].conn_fd,str_time,strlen(str_time));
                                                 }
                                             }
                                         }//end for j loop
