@@ -7,3 +7,4 @@ ver1.4.1 testing broadcast system
 ver1.4.5 broadcast
 1.4.6 pm cl
 1.4.6beta history
+1.4.5beta2 history

@@ -28,11 +28,11 @@ char *main_exit = "Good bye~\n";
 
 //History
 char *history_title = "\n------------------------ Historical Messages -----------------------\n";
-char *history_end = "--------------------------------------------------------------------\nPlease input '/Home' if you want back";
+char *history_end = "--------------------------------------------------------------------\nPlease input '/Home' if you want back\n";
 
 //Offline
 char *offline_title = "\n------------------------ Off-line Messages -------------------------\n";
-char *offline_end = "--------------------------------------------------------------------\nPlease input '/Home' if you want back";
+char *offline_end = "--------------------------------------------------------------------\nPlease input '/Home' if you want back\n";
 
 //Chat Room
 char *chat_title = "\n---------------------------- Chat Room -----------------------------\n";
