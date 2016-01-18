@@ -319,7 +319,7 @@ int main(int argc,char *argv[]){
                         {
                             strcpy(requestP[conn_fd].account,requestP[conn_fd].buf);
 
-                            request[conn_fd]
+                            // request[conn_fd]
                             //*****WORKING HEAD*****
                         }//end(state:2 substate:1)
                         
