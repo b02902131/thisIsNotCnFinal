@@ -324,6 +324,7 @@ int main(int argc,char *argv[]){
                                     sprintf(buf,"[toe toe talk] %s: %s\n",requestP[conn_fd].account, &requestP[conn_fd].buf[2+strlen(pm_to)]);
 
                                 if(isPM){
+                                    // deal with account doesn't exist
                                     int account_avaible = 0;
                                     for(i=0;i<=member_list_len;i++){
                                         if(strcmp(pm_to, mem[i].account) == 0){
@@ -333,6 +334,11 @@ int main(int argc,char *argv[]){
                                     }
                                     if(account_avaible == 0){
                                         sendUI(conn_fd,"this ID doesn't exit\n\n");
+                                        break;
+                                    }
+                                    // deal with PM self
+                                    if(strcmp(pm_to, requestP[conn_fd].account) == 0){
+                                        sendUI(conn_fd,"Don't talk to youself, idiot!\n\n");
                                         break;
                                     }
                                 }
