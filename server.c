@@ -136,7 +136,6 @@ int main(int argc,char *argv[]){
         strcpy(mem[i].passward,temp_passward);
     }
     member_list_len = i;
-    printf("139: member_list_len = %d\n", member_list_len);
     for(i=0;i<max_member;i++){
     	mem[i].online = 0;
     	mem[i].busy = 0;
@@ -359,13 +358,13 @@ int main(int argc,char *argv[]){
                             }
                             else if(requestP[conn_fd].correct == 2 &&requestP[conn_fd].is_online == 1)
                             {
+                            //*****WORKING HEAD*****
                             }
                             else
                             {
                                 changeStateAndSendUI(conn_fd,0,0,login_error);
 
                             }
-                            //*****WORKING HEAD*****
                         }//end else if(state:1 substate:2)
                         
                         //state:1 substate:1(login-account)============================================
