@@ -62,6 +62,7 @@ int maxfd;  // size of open file descriptor table, size of request list
 
 
 // my function
+static void setMemOB(int conn_fd, int online, int busy, member * mem, int member_list_len);
 static void printMainTable(int conn_fd, member* mem, int member_list_len, int connect_sum);
 static void sendUI(int conn_fd, char * ui);
 static void changeStateAndSendUI(int conn_fd, int state, int substate, char * ui);
@@ -304,7 +305,40 @@ int main(int argc,char *argv[]){
                         
                         //state:3 substate:1(Main table)===========================================
                         else if(s1 == 3 && s2 == 1)
-                        {
+                        {//*****WORKING HEAD*****
+                            int main_select = atoi(requestP[conn_fd].buf);
+                            if(main_select == 1)
+                            {
+                                
+                            }
+                            else if(main_select == 2)
+                            {
+                                
+                            }
+                            else if(main_select == 3)
+                            {
+                                
+                            }
+                            else if(main_select == 4)
+                            {
+
+                            }
+                            else if(main_select == 5)
+                            {
+
+                                sendUI(conn_fd, main_exit);
+                                setMemOB(conn_fd,0,0,mem,member_list_len);
+                                changeState(conn_fd,0,0);
+
+                                close(conn_fd);
+                                FD_CLR(conn_fd, &active_fd_set);
+                                break;
+                            }
+                            else
+                            {
+                                changeStateAndSendUI(conn_fd,3,1,select_err);
+                                printMainTable(conn_fd, mem, member_list_len, connect_sum);
+                            }
                             break;
                         }//end (state:3 substate:1)
                         
@@ -339,7 +373,7 @@ int main(int argc,char *argv[]){
                             break;
                         }//end (state:2 substate:2)
 
-                            //*****WORKING HEAD*****
+                            
                         
                         //state:2 substate:1(Create-account)===========================================
                         else if(s1 == 2 && s2 == 1)
@@ -457,7 +491,7 @@ int main(int argc,char *argv[]){
                         {
                             int login_table_input = atoi(requestP[conn_fd].buf);
 
-                            if(login_table_input != 1 && login_table_input !=2){
+                            if(login_table_input < 1 && login_table_input > 3){
                                 changeStateAndSendUI(conn_fd, 0, 0, select_err);
                                 sendUI(conn_fd, login_table);   
                             }
@@ -467,6 +501,13 @@ int main(int argc,char *argv[]){
                             }
                             else if(login_table_input == 2){
                                 changeStateAndSendUI(conn_fd,2,1,register_account);
+                            }
+                            else if(login_table_input == 3){
+                                sendUI(conn_fd, main_exit);
+                                setMemOB(conn_fd,0,0,mem,member_list_len);
+                                changeState(conn_fd,0,0);
+                                close(conn_fd);
+                                FD_CLR(conn_fd, &active_fd_set);
                             }
                             break;
                         }//(End)state:0 substate:0(login table)========================================
@@ -481,8 +522,17 @@ int main(int argc,char *argv[]){
 
 
 //my function ============================================================================================//
+static void setMemOB(int conn_fd, int online, int busy, member * mem, int member_list_len){
+    int i;
+    for(i=0;i<=member_list_len;i++){
+        if(strcmp(requestP[conn_fd].account,mem[i].account) == 0){
+            mem[i].online = online;
+            mem[i].busy = busy;
+        }
+    }
+}
 
-static void printMainTable(int conn_fd, member* mem, int member_list_len, int connect_sum){
+static void printMainTable(int conn_fd, member * mem, int member_list_len, int connect_sum){
     int i, j;
     char buf[512];
     for(i=0;i<=member_list_len;i++)
