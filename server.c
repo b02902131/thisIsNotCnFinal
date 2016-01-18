@@ -330,6 +330,7 @@ int main(int argc,char *argv[]){
                                 changeState(conn_fd,3,1);
                                 printMainTable(conn_fd, mem, member_list_len, connect_sum);
                                 sendUI(conn_fd, main_menu);
+                                break;
                             }
                             else
                             {
@@ -376,6 +377,14 @@ int main(int argc,char *argv[]){
                         //state:5 substate:1(File transformation)==================================
                         else if(s1 == 5 && s2 == 1)
                         {   
+                            if(strcmp(requestP[conn_fd].buf,"/Home") == 0 || strcmp(requestP[conn_fd].buf,"/home") == 0)
+                            {
+                                changeState(conn_fd,3,1);
+                                printMainTable(conn_fd, mem, member_list_len, connect_sum);
+                                sendUI(conn_fd, main_menu);
+                                break;
+                            }
+
                             int file_select = atoi(requestP[conn_fd].buf);
                             if(file_select == 1){
                                 changeState(conn_fd, 5, 2);
