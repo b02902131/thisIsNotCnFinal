@@ -1,5 +1,5 @@
 char *select_err = "\n------------------------------ Error ------------------------------\n*Warning:Your selection is error!!!\n=> Please select again!!!\n";
-char *login_table = "\n==================== Welcome to group 6 for cn ====================\nPlease input the number you want to do\n1.Login\n2.Create new account\n===================================================================\nMy selection:\n";
+char *login_table = "\n==================== Welcome to group 6 for cn =================\nPlease input the number you want to do\n1.Login\n2.Create new account\n3.Exit\n================================================================\nMy selection:\n";
 
 char *login_account = "------------------------------ Login ------------------------------\n1.Account:\n";
 char *login_pwd = "2.Passward:\n";
