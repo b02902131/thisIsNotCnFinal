@@ -870,11 +870,7 @@ static void printMainTable(int conn_fd, member * mem, int member_list_len, int c
                     mem[i].busy = 0;
             }
         }
-    //sendUI(conn_fd, main_title);
-
-    //char hello_title[20];
-    //sprintf(hello_title,"Hello,%s",requestP[conn_fd].account);
-    //sendUI(conn_fd, hello_title);
+	
     sendUI(conn_fd, main_friend_title1);
     sendUI(conn_fd, main_friend_title2);
     sendUI(conn_fd, main_friend_title3);
