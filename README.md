@@ -18,3 +18,5 @@ ver1.6.1 5_1home
 ver1.9 file sender
 ver2.0 update member.txt
 ver2.1beta
+ver2.12 fix state 6,7 /home prob
+

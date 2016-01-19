@@ -276,11 +276,13 @@ int main(int argc,char *argv[]){
 
                         //state:7 substate:1(Offline Message)=====================================
                         //state:6 substate:1(Historical Message)==================================
-                        else if(s1 == 6 && s1 == 7)
+                        else if(s1 == 6 || s1 == 7)
                         {
                             if(strcmp(requestP[conn_fd].buf,"/Home") == 0 || strcmp(requestP[conn_fd].buf,"/home") == 0)
                             {
                                 changeStateAndSendUI(conn_fd,3,1,main_menu);
+                                printMainTable(conn_fd, mem, member_list_len, connect_sum);
+                                sendUI(conn_fd, main_menu);
                             }
                             break;
                         }//end (state:6,7 substate:1)
