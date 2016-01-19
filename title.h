@@ -41,7 +41,7 @@ char *chat_title = "\n---------------------------- Chat Room -------------------
 char *file_tran_title = "\n------------------------ Send/Receive files ------------------------\nPlease input the number you want to do\n1.Send the file\n2.Receive the file\nPlease input '/Home' if you want back\n--------------------------------------------------------------------\nMy selection:\n";
 char *file_title1 = "\n--------------------------- User's lists --------------------------\n";
 char *file_title2 = "     Online           Ready                ID             Account\n-------------------------------------------------------------------\n";
-char *file_title3 = "-------------------------------------------------------------------\n'You can only send to those who are online and ready!!'\n=> Please input '/Home' if you want back\nPlease input the ID of user's lists that you want to send\nID:\n";
+char *file_title3 = "-------------------------------------------------------------------\n'You can only send to those who are online and ready!!'\nPlease input '/Home' if you want back\nPlease input the ID of user's lists that you want to send\nID:\n";
 char *file_err1 = "\n------------------------------ Error ------------------------------\n'Your input ID is not online!!!'\n=> Please select again!!!\n";
 char *file_err2 = "\n------------------------------ Error ------------------------------\n'Your input ID is not ready!!!'\n=> Please select again!!!\n";
 char *file_err3 = "\n------------------------------ Error ------------------------------\n'The ID you inputed is wrong!!!'\n=> Please select again!!!\n";
@@ -51,7 +51,7 @@ char *file_err4 = "\n------------------------------ Error ----------------------
 char *sending_title1 = "\n------------------------------ Sending ----------------------------\nReceiver:";
 char *sending_title2 = "\nPlease input Files' names you want to send (no space)\n";
 char *sending_err1 = "\n------------------------------ Error ------------------------------\n*Warning:You can not send more than 5 files at the same time!!!\n=> Please enter again!!!\n";
-char *sending_finish = "\n=> Please input '/Home' if you want back\n";
+char *sending_finish = "\nPlease input '/Home' if you want back\n";
 
 //Receiving
 char *receiving_title = "\n----------------------------- Receiving ---------------------------\nPlease input '/Home' if you want back\n";
